@@ -55,6 +55,7 @@ function getJuliaSet(ref, active) {
 
 export const JuliaSetViewer = () => {
   const [activeFn, setActiveFn] = useState(-1);
+  const [execTime, setExecTime] = useState("");
   const canvasRef = React.useRef(null);
 
   return (
@@ -64,14 +65,18 @@ export const JuliaSetViewer = () => {
         <FunctionsWrapper>
           <ActiveSet>
             {activeFn === -1
-              ? "Select a function from above:"
-              : `Showing function z^${sets[activeFn].power} + ${sets[activeFn].constant}`}
+              ? "Select a function:"
+              : `Function z^${sets[activeFn].power} + ${sets[activeFn].constant} took ${execTime}`}
           </ActiveSet>
           {sets.map((set, index) => (
             <StyledFunction
+              key={`julia-${index}`}
               onClick={() => {
                 setActiveFn(index);
+                const start = performance.now();
                 getJuliaSet(canvasRef, index);
+                const end = performance.now();
+                setExecTime(`${Math.round(end - start) / 1000}s`);
               }}
             >
               {`f(z) = z^${set.power} + ${set.constant}`}
